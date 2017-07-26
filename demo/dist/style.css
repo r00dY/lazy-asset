@@ -1,0 +1,88 @@
+.lazy-asset {
+  position: relative; }
+  .lazy-asset picture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+    .lazy-asset picture img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      opacity: 0;
+      background-position: center center;
+      background-size: cover; }
+  .lazy-asset video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+    opacity: 0; }
+  .lazy-asset .lazy-asset-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%; }
+  .lazy-asset.lazy-asset-mode-aspect-ratio .lazy-asset-wrapper {
+    height: auto; }
+  .lazy-asset.image .lazy-asset-wrapper {
+    background-color: lightgrey; }
+  .lazy-asset.video .lazy-asset-wrapper {
+    background-color: black; }
+
+html, body {
+  -webkit-font-smoothing: antialiased; }
+
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0; }
+
+.modes .image-cover {
+  width: 50vw;
+  height: 50vh;
+  margin-bottom: 50px; }
+  @media screen and (min-width: 1600px) {
+    .modes .image-cover {
+      width: 100vw; } }
+
+.modes .image-cover-parts {
+  margin-bottom: 50px;
+  width: 75vw;
+  height: 75vh; }
+
+.modes .image-aspect-ratio {
+  margin-bottom: 50px;
+  width: 50vw; }
+
+.modes .image-contain {
+  width: 50vw;
+  height: 50vw;
+  background-color: black;
+  margin-bottom: 50px; }
+
+.deferred-loads {
+  width: 100%; }
+  .deferred-loads .item {
+    margin: 20px;
+    width: 400px; }
+
+.test-svg {
+  width: 50vw;
+  height: 50vw;
+  background-color: black;
+  position: relative; }
+  .test-svg svg {
+    background-color: red;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    object-fit: contain; }
