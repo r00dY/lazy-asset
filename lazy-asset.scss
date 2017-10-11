@@ -33,6 +33,7 @@
 		position: relative;
 		width: 100%;
 		height: 100%;
+    overflow: hidden;
 	}
 
 	&.lazy-asset-mode-aspect-ratio { // for aspect ratio wrapper has padding-botom, so we don't want to set height

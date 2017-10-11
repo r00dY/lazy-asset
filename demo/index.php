@@ -20,7 +20,7 @@
 
 		<div class="modes">
 
-			<div class="lazy-asset lazy-asset-auto-sizes image-cover" data-anim="fade">
+			<div class="lazy-asset  image-cover" data-anim="fade">
 				<div class="lazy-asset-wrapper">
 					<picture>
 						<source data-srcset="
@@ -43,7 +43,7 @@
 				</div>
 			</div>
 
-			<div class="lazy-asset lazy-asset-auto-sizes image-cover" data-anim="fade">
+			<div class="lazy-asset  image-cover" data-anim="fade">
 				<div class="lazy-asset-wrapper">
 					<picture>
 						<source data-srcset="
@@ -97,7 +97,7 @@
 					<video loop muted><source data-src='video.mp4'></video>
 				</div>
 			</div>
-			
+
 			<div class="lazy-asset image-aspect-ratio" data-anim="fade">
 				<div class="lazy-asset-wrapper" style="padding-bottom: 50%">
 					<picture>
@@ -133,16 +133,16 @@
 
 			<h1>Empty</h1>
 
-			<div class="lazy-asset lazy-asset-auto-sizes image-cover" data-anim="fade">
+			<div class="lazy-asset  image-cover" data-anim="fade">
 				<div class="lazy-asset-wrapper">
 
 				</div>
 			</div>
-			
+
 			<div class="lazy-asset image-aspect-ratio" data-anim="fade" style="margin-bottom: 50px;">
 				<div class="lazy-asset-wrapper" style="padding-bottom: 50%">
 				</div>
-			</div>			
+			</div>
 
 			<div class="lazy-asset lazy-asset-mode-contain image-contain" data-anim="fade" data-aspect-ratio="2.5">
 				<div class="lazy-asset-wrapper">
@@ -152,6 +152,14 @@
 			<h1>PHP Helpers</h1>
 
 			<?php
+
+				LazyAsset::setSizesReplaceMap([
+					"_xs" => "0px",
+					"_sm" => "420px",
+					"_md" => "768px",
+					"_xl" => "1600px"
+				]);
+
 				LazyAsset::put([
 					"mode"				=> LazyAsset::MODE_COVER,
 					"classes" 			=> "image-cover",
@@ -180,7 +188,8 @@
 							"height" => 1071,
 							"portrait" => true
 						]
-					]
+					],
+					"sizes" => "(min-width: _sm) 33vw, (min-width: _md) 66vw, 100vw"
 				]);
 
 				LazyAsset::put([
@@ -211,7 +220,8 @@
 							"height" => 1071,
 							"portrait" => true
 						]
-					]
+					],
+					"sizes" => ["_xs" => "33vw", "_md" => "66vw", "_xl" => "100vw"]
 				]);
 
 				LazyAsset::put([

@@ -10361,9 +10361,27 @@
 			}
 		}
 
-		function isAutoplayDisabled() {
-			return bowser.mobile || bowser.tablet || bowser.msie || bowser.msedge;
-		}
+	    function isAutoplayDisabled() {
+
+	        if (bowser.msie || bowser.msedge) {
+	          return true;
+	        }
+
+	        if (bowser.mobile || bowser.tablet) {
+
+	          if (bowser.check({ chrome: "53" })) {
+	            return false;
+	          }
+
+	          if (bowser.check({ safari: "10" })) {
+	            return false;
+	          }
+
+	          return true;
+	        }
+
+	        return false;
+	    }
 
 		function setAutoSize(sources, width) {
 
@@ -10377,13 +10395,16 @@
 			});
 		}
 
-		this.autosize = function(sources, width) {
-			selectMeOrDecentants(sources, '.lazy-asset').each(function() {
-				if (typeof width === 'undefined') { width = $(this).width(); }
+	      this.autosize = function(sources, width) {
+	        selectMeOrDecentants(sources, '.lazy-asset').each(function() {
 
-				setAutoSize($(this).find('picture source'), width);
-			});
-		}
+	          var pictureWidth = width;
+	          if (typeof width === 'undefined') { pictureWidth = $(this).width(); }
+
+	          setAutoSize($(this).find('picture source'), pictureWidth);
+	        });
+	      }
+
 
 		this.initAutoSizes = function() {
 			$(window).resize(function() {
@@ -10480,7 +10501,7 @@
 		this.pauseVideo = function(selector) {
 
 			selectMeOrDecentants(selector, '.lazy-asset').each(function() {
-			
+
 				$(this).removeClass('playing');
 
 				var video = $(this).find('video');
@@ -10659,7 +10680,7 @@
 			} else {
 				this.progressCallback(1);
 			}
-			
+
 			if (this.numberOfVideos == this.numberOfVideosLoaded && this.numberOfImages == this.numberOfImagesLoaded) {
 				this.successCallback();
 			}

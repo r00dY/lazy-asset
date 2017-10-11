@@ -6,6 +6,12 @@ class LazyAsset {
     const MODE_CONTAIN = 1;
     const MODE_ASPECT_RATIO = 2;
 
+    private static $SIZES_REPLACE_MAP;
+
+    public static function setSizesReplaceMap($map) {
+    	self::$SIZES_REPLACE_MAP = $map;
+    }
+
     private static function validateSourceAndAddAspectRatio(&$source) {
 		if (!array_key_exists("url", $source)) { trigger_error("lazy asset must have 'url' property defined!"); }
 		if (!array_key_exists("width", $source)) { trigger_error("lazy asset must have 'width' property defined!"); }
@@ -26,9 +32,40 @@ class LazyAsset {
 		if (!array_key_exists("attributes", $options)) { $options["attributes"] = array(); }
 		if (!array_key_exists("autosizes", $options)) { $options["autosizes"] = false; }
 
+		if (!array_key_exists("sizes", $options)) {
+			$options["sizes"] = "100vw";
+		} else {
+
+			if (is_string($options["sizes"])) {
+				foreach(self::$SIZES_REPLACE_MAP as $key => $val) {
+					$options["sizes"] = str_replace($key, $val, $options["sizes"]);
+				}
+			}
+			else if (is_array($options["sizes"])) {
+
+				$resultSizesString = "";
+
+				foreach($options["sizes"] as $breakpoint => $val) {
+
+					$realKeyValue = array_key_exists($breakpoint, self::$SIZES_REPLACE_MAP) ? self::$SIZES_REPLACE_MAP[$breakpoint] : $breakpoint;
+
+					if ($resultSizesString != "") { $resultSizesString .= ", "; }
+
+					$resultSizesString .= ("(min-width: " . $realKeyValue . ") " . $val);
+				}
+
+				$options["sizes"] = $resultSizesString;
+
+			}
+			else {
+				trigger_error("lazy asset must have 'sizes' property set as string or array!!!");
+			}
+
+		}
+
 		if (!array_key_exists("alt", $options)) { $options["alt"] = ""; }
 		if (!array_key_exists("images", $options)) { $options["images"] = []; }
-		
+
 		if (!array_key_exists("videos", $options)) { $options["videos"] = []; }
 		if (!array_key_exists("loop", $options)) { $options["loop"] = false; }
 		if (!array_key_exists("autoplay", $options)) { $options["autoplay"] = false; }
@@ -52,7 +89,7 @@ class LazyAsset {
 			}
 
 			if ($image["fallback"]) {
-				$options["images_fallback_url"] = $image["url"];	
+				$options["images_fallback_url"] = $image["url"];
 			}
 		}
 
@@ -105,15 +142,15 @@ class LazyAsset {
 					<?php foreach($options["images_portrait"] as $image): ?>
 						<?= $image["url"] ?> <?= $image["width"]?>w,
 					<?php endforeach ?>
-					" media="(orientation: portrait)">
+					" media="(orientation: portrait)" <?php if (!$options["autosizes"]): ?>sizes="<?= $options["sizes"] ?>"<?php endif ?>>
 					<?php endif; ?>
-					
+
 					<?php if (count($options["images_landscape"]) > 0): ?>
 					<source data-srcset="
 					<?php foreach($options["images_landscape"] as $image): ?>
 						<?= $image["url"] ?> <?= $image["width"] ?>w,
 					<?php endforeach ?>
-					">
+					" <?php if (!$options["autosizes"]): ?>sizes="<?= $options["sizes"] ?>"<?php endif ?>>
 					<?php endif; ?>
 
 					<img data-src="<?= $options["images"][0]["url"] ?>" data-fallback-src="<?= $options["images_fallback_url"] ?>" alt="<?= $options["alt"] ?>">

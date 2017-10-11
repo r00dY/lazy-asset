@@ -29,7 +29,8 @@
   .lazy-asset .lazy-asset-wrapper {
     position: relative;
     width: 100%;
-    height: 100%; }
+    height: 100%;
+    overflow: hidden; }
   .lazy-asset.lazy-asset-mode-aspect-ratio .lazy-asset-wrapper {
     height: auto; }
   .lazy-asset.image .lazy-asset-wrapper {
