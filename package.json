@@ -2,9 +2,8 @@
     "name": "lazy-asset",
     "description": "Lazy loading of assets",
     "author": "Andrzej Dąbrowski <a.r.dabrowski@gmail.com>",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "main": "lazy-asset.js",
-
     "dependencies": {
         "gsap": "*",
         "jquery": "*",
