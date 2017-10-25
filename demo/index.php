@@ -399,7 +399,7 @@
 
 
 				?>
-					<div class="lazy-asset lazy-asset-load-when-in-viewport image-aspect-ratio item" data-anim="fade">
+					<div class="lazy-asset lazy-asset-load-when-in-viewport image-aspect-ratio lazy-asset-image item" data-anim="fade">
 						<div class="lazy-asset-wrapper" style="padding-bottom: 50%">
 							<picture>
 								<source data-srcset="<?= $path ?>">

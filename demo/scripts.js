@@ -8,7 +8,7 @@ global.$ = $;
  *
  * 1. Video preloading
  * 2. Vimeo integration
- * 
+ *
  */
 
 $(document).ready(function() {
