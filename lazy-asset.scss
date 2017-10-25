@@ -45,7 +45,7 @@
 	// Default background colors
 	&.image {
 		.lazy-asset-wrapper {
-			background-color: lightgrey;
+			background-color: #f7f7f7;
 		}
 	}
 
@@ -54,4 +54,18 @@
 			background-color: black;
 		}
 	}
+
+  // Animations
+  &[data-anim=fade] {
+    img, video {
+      transition: opacity 1s;
+    }
+  }
+
+  &.loaded {
+    img, video {
+      opacity: 1;
+    }
+  }
+
 }

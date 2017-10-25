@@ -160,7 +160,7 @@ class LazyAsset {
 
 				<?php if (count($options["videos"]) > 0): ?>
 
-				<video <?php if ($options["loop"]): ?>loop<?php endif; ?> <?php if ($options["autoplay"]): ?>autoplay<?php endif; ?> <?php if ($options["muted"]): ?>muted<?php endif; ?>>
+				<video playsinline <?php if ($options["loop"]): ?>loop<?php endif; ?> <?php if ($options["autoplay"]): ?>autoplay<?php endif; ?> <?php if ($options["muted"]): ?>muted<?php endif; ?>>
 					<?php foreach($options["videos"] as $video): ?>
 						<source data-src="<?= $video["url"] ?>">
 					<?php endforeach ?>

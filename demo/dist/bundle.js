@@ -10361,28 +10361,39 @@
 			}
 		}
 
-	    function isAutoplayDisabled() {
+	  function isAutoplayDisabled() {
 
-	        if (bowser.msie || bowser.msedge) {
-	          return true;
+	      if (bowser.msie || bowser.msedge) {
+	        return true;
+	      }
+
+	      if (bowser.mobile || bowser.tablet) {
+
+	        if (bowser.check({ chrome: "53" })) {
+	          return false;
 	        }
 
-	        if (bowser.mobile || bowser.tablet) {
-
-	          if (bowser.check({ chrome: "53" })) {
-	            return false;
-	          }
-
-	          if (bowser.check({ safari: "10" })) {
-	            return false;
-	          }
-
-	          return true;
+	        if (bowser.check({ safari: "10" })) {
+	          return false;
 	        }
 
-	        return false;
-	    }
+	        return true;
+	      }
 
+	      return false;
+	  }
+
+
+	    /** Autosizing is deprecated!!!
+
+	        1. It doesn’t work when something is “display: none”. We must remember to call autoSizes.
+	        2. It doesn’t work when elements are laid out by Javascript.
+	        3. We have no certainty that it works well with resize! That double downloads doesn’t happen etc, specification doesn’t specify this.
+	        4. We can’t preload images before layout is done.
+
+	        Use "sizes" hiting instead. Sad I know :( - heavy duplication of layout logic. Hints should be simple and don't have to be perfect!
+
+	     */
 		function setAutoSize(sources, width) {
 
 			sources.each(function() {
@@ -10394,6 +10405,7 @@
 				}
 			});
 		}
+
 
 	      this.autosize = function(sources, width) {
 	        selectMeOrDecentants(sources, '.lazy-asset').each(function() {
@@ -10433,6 +10445,7 @@
 				}
 			}
 
+	    // Remove element from array, ugly JS way
 			for(var j = 0; j < elementsToRemove.length; j++) {
 				var index = loadWhenInViewPortItems.indexOf(elementsToRemove[j]);
 				if (index > -1) {
@@ -10550,7 +10563,7 @@
 			}
 		}
 
-	    // Function for showing loaded asset
+	  // Function for showing loaded asset
 		function showAsset(asset) {
 
 			var anim = asset.data('anim') || "none";
@@ -10562,12 +10575,6 @@
 			}
 			else {
 				itemToShow = asset.find('img')
-			}
-
-			if (anim == "fade") {
-				TweenLite.to(itemToShow, 1, { alpha: 1 });
-			} else {
-				itemToShow.css('opacity', 1);
 			}
 
 			asset.removeClass('loading').addClass('loaded');

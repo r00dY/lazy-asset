@@ -34,9 +34,13 @@
   .lazy-asset.lazy-asset-mode-aspect-ratio .lazy-asset-wrapper {
     height: auto; }
   .lazy-asset.image .lazy-asset-wrapper {
-    background-color: lightgrey; }
+    background-color: #f7f7f7; }
   .lazy-asset.video .lazy-asset-wrapper {
     background-color: black; }
+  .lazy-asset[data-anim=fade] img, .lazy-asset[data-anim=fade] video {
+    transition: opacity 1s; }
+  .lazy-asset.loaded img, .lazy-asset.loaded video {
+    opacity: 1; }
 
 html, body {
   -webkit-font-smoothing: antialiased; }
