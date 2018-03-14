@@ -45,6 +45,10 @@
     position: relative;
     width: 100%;
     height: 100%;
+
+    // placeholder
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
   .lazy-asset-wrapper-overflow { // we want picture / video to be overflow: hidden, but not necessarily entire lazy-asset-wrapper (extra content!). Therefore additional container added, overflow: hidden doesn't seem to work on <video> tag
