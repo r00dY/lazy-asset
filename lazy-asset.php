@@ -30,7 +30,7 @@ class LazyAsset {
         if (!array_key_exists("animation", $options)) { $options["animation"] = "none"; }
         if (!array_key_exists("extra_markup", $options)) { $options["extra_markup"] = ""; }
         if (!array_key_exists("attributes", $options)) { $options["attributes"] = array(); }
-        if (!array_key_exists("autosizes", $options)) { $options["autosizes"] = false; }
+        if (!array_key_exists("placeholder", $options)) { $options["placeholder"] = null; }
 
         if (!array_key_exists("sizes", $options)) {
             $options["sizes"] = "100vw";
@@ -135,46 +135,50 @@ class LazyAsset {
 
         ?>
 
-        <div class="lazy-asset <?= $mode ?> <?php if ($options["autosizes"]): ?>lazy-asset-auto-sizes<?php endif; ?> <?= $options["classes"] ?> <?= $typeClass ?>" data-anim="<?php echo $options["animation"]; ?>"  data-aspect-ratio="<?= $options["aspect_ratio"] ?>" <?= self::pasteAttributes($options); ?>>
-            <div class="lazy-asset-wrapper" <?php if ($options["mode"] == self::MODE_ASPECT_RATIO): ?>style="padding-bottom: <?= $options["aspect_ratio_padding"] ?>;"<?php endif; ?> >
+        <div class="lazy-asset <?= $mode ?>  <?= $options["classes"] ?> <?= $typeClass ?>" data-anim="<?php echo $options["animation"]; ?>"  data-aspect-ratio="<?= $options["aspect_ratio"] ?>" <?= self::pasteAttributes($options); ?>>
+            <div class="lazy-asset-wrapper" style="
+                 <?php if ($options["mode"] == self::MODE_ASPECT_RATIO): ?>padding-bottom: <?= $options["aspect_ratio_padding"] ?>;<?php endif; ?>
+                 <?php if (!is_null($options["placeholder"])): ?>background-image:url(<?= $options["placeholder"] ?>);<?php endif ?>"
+            >
 
-                <?php if (count($options["images"]) > 0): ?>
+                <div class="lazy-asset-wrapper-overflow">
+                    <?php if (count($options["images"]) > 0): ?>
 
-                <picture>
+                        <picture>
 
-                    <?php if (count($options["images_portrait"]) > 0): ?>
-                    <source data-srcset="
+                            <?php if (count($options["images_portrait"]) > 0): ?>
+                                <source data-srcset="
                     <?php foreach($options["images_portrait"] as $image): ?>
                         <?= $image["url"] ?> <?= $image["width"]?>w,
                     <?php endforeach ?>
-                    " media="(orientation: portrait)" <?php if (!$options["autosizes"]): ?>sizes="<?= $options["sizes"] ?>"<?php endif ?>>
-                    <?php endif; ?>
+                    " media="(orientation: portrait)" sizes="<?= $options["sizes"] ?>">
+                            <?php endif; ?>
 
-                    <?php if (count($options["images_landscape"]) > 0): ?>
-                    <source data-srcset="
+                            <?php if (count($options["images_landscape"]) > 0): ?>
+                                <source data-srcset="
                     <?php foreach($options["images_landscape"] as $image): ?>
                         <?= $image["url"] ?> <?= $image["width"] ?>w,
                     <?php endforeach ?>
-                    " <?php if (!$options["autosizes"]): ?>sizes="<?= $options["sizes"] ?>"<?php endif ?>>
+                    " sizes="<?= $options["sizes"] ?>">
+                            <?php endif; ?>
+
+                            <img data-src="<?= $options["images"][0]["url"] ?>" data-fallback-src="<?= $options["images_fallback_url"] ?>" alt="<?= $options["alt"] ?>">
+                        </picture>
+
                     <?php endif; ?>
 
-                    <img data-src="<?= $options["images"][0]["url"] ?>" data-fallback-src="<?= $options["images_fallback_url"] ?>" alt="<?= $options["alt"] ?>">
-                </picture>
+                    <?php if (count($options["videos"]) > 0): ?>
 
-                <?php endif; ?>
+                        <video playsinline <?php if ($options["loop"]): ?>loop<?php endif; ?> <?php if ($options["autoplay"]): ?>autoplay<?php endif; ?> <?php if ($options["muted"]): ?>muted<?php endif; ?>>
+                            <?php foreach($options["videos"] as $video): ?>
+                                <source data-src="<?= $video["url"] ?>">
+                            <?php endforeach ?>
+                        </video>
 
-                <?php if (count($options["videos"]) > 0): ?>
-
-                <video playsinline <?php if ($options["loop"]): ?>loop<?php endif; ?> <?php if ($options["autoplay"]): ?>autoplay<?php endif; ?> <?php if ($options["muted"]): ?>muted<?php endif; ?>>
-                    <?php foreach($options["videos"] as $video): ?>
-                        <source data-src="<?= $video["url"] ?>">
-                    <?php endforeach ?>
-                </video>
-
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
 
                 <?= $options["extra_markup"]; ?>
-
             </div>
          </div>
 

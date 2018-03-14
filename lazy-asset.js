@@ -1,196 +1,178 @@
-var $ = require("jquery");
-var bowser = require("bowser");
+let bowser = require("bowser");
 
-var LazyAsset = new function() {
-    var _this = this;
+/** Autosizing is removed!!!
 
+ 1. It doesn’t work when something is “display: none”. We must remember to call autoSizes. It might cause totally undefined behaviour across the site as scale goes up.
+ 2. It doesn’t work when elements are laid out by Javascript.
+ 3. We have no certainty that it works well with resize! Altough double downloads doesn’t happen etc, specification doesn’t specify this.
+ 4. We can’t preload images before layout is done.
 
-    function selectMeOrDecentants(node, selector) {
-        if ($(node).is(selector)) {
-            return $(node);
+ */
+
+if (!Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.msMatchesSelector;
+}
+
+let LazyAsset = new function () {
+
+    function selectMeOrDescendants(arg, cls) {
+
+        let nodes = [];
+
+        // selector
+        if (typeof arg === 'string') {
+            nodes = document.querySelectorAll(arg);
+        }
+        // node
+        else if (arg instanceof Node) {
+            nodes = [arg];
+        }
+        // node list
+        else if (arg instanceof NodeList) {
+            nodes = arg;
         }
         else {
-            return $(node).find(selector);
-        }
-    }
-
-  function isAutoplayDisabled() {
-
-      if (bowser.msie || bowser.msedge) {
-        return true;
-      }
-
-      if (bowser.mobile || bowser.tablet) {
-
-        if (bowser.check({ chrome: "53" })) {
-          return false;
+            throw 'Bad input argument type for LazyLoad method';
         }
 
-        if (bowser.check({ safari: "10" })) {
-          return false;
-        }
+        let result = [];
 
-        return true;
-      }
+        nodes.forEach(function(node) {
 
-      return false;
-  }
-
-
-    /** Autosizing is deprecated!!!
-
-        1. It doesn’t work when something is “display: none”. We must remember to call autoSizes.
-        2. It doesn’t work when elements are laid out by Javascript.
-        3. We have no certainty that it works well with resize! That double downloads doesn’t happen etc, specification doesn’t specify this.
-        4. We can’t preload images before layout is done.
-
-        Use "sizes" hiting instead. Sad I know :( - heavy duplication of layout logic. Hints should be simple and don't have to be perfect!
-
-     */
-
-    this.disableAutosizingTotally = false; // settings this flag to true optimizes loading images if autosizing is disabled
-
-    function setAutoSize(sources, width) {
-
-        sources.each(function() {
-            if (typeof width === 'undefined' || width === 0) {
-                $(this).attr('sizes', '1vw'); // almost empty! It will load asset but smallest possible.
+            // If node itself is matching selector
+            if (node.classList.contains(cls)) {
+                result.push(node);
+                return;
             }
-            else {
-                $(this).attr('sizes', Math.round(width / window.innerWidth * 100) + 'vw');
+
+            result = result.concat(Array.from(node.querySelectorAll('.' + cls)));
+        });
+
+        return result;
+    }
+
+    function isAutoplayDisabled() {
+
+        if (bowser.msie || bowser.msedge) {
+            return true;
+        }
+
+        if (bowser.mobile || bowser.tablet) {
+
+            if (bowser.check({chrome: "53"})) {
+                return false;
             }
-        });
+
+            if (bowser.check({safari: "10"})) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 
-      this.autosize = function(sources, width) {
-        selectMeOrDecentants(sources, '.lazy-asset').each(function() {
-
-          var pictureWidth = width;
-          if (typeof width === 'undefined') { pictureWidth = $(this).width(); }
-
-          setAutoSize($(this).find('picture source'), pictureWidth);
-        });
-      }
-
-
-    this.initAutoSizes = function() {
-        $(window).resize(function() {
-            _this.autosize('.lazy-asset.lazy-asset-auto-sizes');
-        });
-    }
-
-    function isElementInViewport (el) {
-        var rect = el.getBoundingClientRect();
-        return rect.top < window.innerHeight * 2;
+    function isElementInViewport(el) {
+        let rect = el.getBoundingClientRect();
+        return rect.top < window.innerHeight * 2 && rect.top > -window.innerHeight && rect.width > 0 && rect.height > 0;
     }
 
 
-    var loadWhenInViewPortItems = [];
-    this.loadWhenInViewportScrollCallback = function(scrollTop) {
+    let loadWhenInViewPortItems = [];
+    this.loadWhenInViewportScrollCallback = function () {
 
-        var itemsToLoad = [];
+        let itemsToLoad = [];
 
-        for(var i = 0; i < loadWhenInViewPortItems.length; i++) {
-            var item = loadWhenInViewPortItems[i];
-
-            if (isElementInViewport(item[0])) {
+        loadWhenInViewPortItems.forEach(function(item) {
+            if (isElementInViewport(item)) {
                 itemsToLoad.push(item);
             }
-        }
+        });
 
-    // Remove element from array, ugly JS way
-        for(var j = 0; j < itemsToLoad.length; j++) {
-            var index = loadWhenInViewPortItems.indexOf(itemsToLoad[j]);
+        // Remove element from array, ugly JS way
+        itemsToLoad.forEach(function(item, i) {
+            let index = loadWhenInViewPortItems.indexOf(itemsToLoad[i]);
             if (index > -1) {
                 loadWhenInViewPortItems.splice(index, 1);
             }
-        }
+        });
 
-        for(var j = 0; j < itemsToLoad.length; j++) {
-            loadAsset(itemsToLoad[j]);
-        }
-
-    }
+        itemsToLoad.forEach(function(item) {
+            loadAsset(item);
+        });
+    };
 
     // We need to call this on resize and on init of pages which have images in "Contain mode". Reasons why we can't do this by CSS?
     // 1. If we have SVG, and image with max-width 100%, min-width 100%, height: auto, width: auto, then if image is smaller then it doesn’t snap to the placeholder.
     // 2. If we have SVG and div with background-size: contain, then 1px line problem occurs.
     // 3. If we make image as background-size: contain, and make some little transform to make it bigger, OR make SVG smaller, then if we put any layer on it (extra_content), it won’t snap to pixels.
     // Therefore, all solutions suck.
-    this.normalizeImagesInContainMode = function(selector) {
+    this.normalizeImagesInContainMode = function (selector) {
 
-        selectMeOrDecentants(selector, '.lazy-asset-mode-contain').each(function() {
+        selectMeOrDescendants(selector, 'lazy-asset-mode-contain').forEach(function (item) {
 
-            var wrapper = $(this).find('.lazy-asset-wrapper');
-            // var width = $(this).data('width');
-            // var height = $(this).data('height');
-            var naturalAspectRatio = parseFloat($(this).data('aspect-ratio'));
+            let wrapper = item.querySelector('.lazy-asset-wrapper');
+            let naturalAspectRatio = parseFloat(item.dataset.aspectRatio);
 
-            var containerWidth = $(this).width();
-            var containerHeight = $(this).height();
-            var containerAspectRatio = containerWidth / containerHeight;
+            let containerWidth = item.clientWidth;
+            let containerHeight = item.clientHeight;
+            let containerAspectRatio = containerWidth / containerHeight;
 
             if (naturalAspectRatio > containerAspectRatio) {
 
-                var heightPercent = (containerAspectRatio / naturalAspectRatio) * 100;
-                var topPercent = (100 - heightPercent) / 2;
+                let heightPercent = (containerAspectRatio / naturalAspectRatio) * 100;
+                let topPercent = (100 - heightPercent) / 2;
 
-                wrapper.css({
-                    width: "100%",
-                    height: heightPercent + '%',
-                    top: topPercent + '%'
-                });
+                wrapper.style.width = "100%";
+                wrapper.style.height = heightPercent + "%";
+                wrapper.style.top = topPercent + "%";
             }
             else {
 
-                var widthPercent = (naturalAspectRatio / containerAspectRatio) * 100;
-                var leftPercent = (100 - widthPercent) / 2;
+                let widthPercent = (naturalAspectRatio / containerAspectRatio) * 100;
+                let leftPercent = (100 - widthPercent) / 2;
 
-                wrapper.css({
-                    width: widthPercent + '%',
-                    height: '100%',
-                    left: leftPercent + '%'
-                });
+                wrapper.style.width = widthPercent + "%";
+                wrapper.style.height =  "100%";
+                wrapper.style.top = leftPercent + "%";
             }
         });
 
-    }
+    };
 
-    this.playVideo = function(selector) {
+    this.playVideo = function (selector) {
 
-        selectMeOrDecentants(selector, '.lazy-asset').each(function() {
-            $(this).addClass('playing');
+        selectMeOrDescendants(selector, 'lazy-asset').forEach(function (item) {
+            item.classList.add('playing');
 
-            var video = $(this).find('video');
-            if (video.length > 0) {
-                video[0].play();
+            let video = item.querySelector('video');
+            if (video !== null) {
+                video.play();
             }
-
         })
-    }
+    };
 
-    this.pauseVideo = function(selector) {
+    this.pauseVideo = function (selector) {
 
-        selectMeOrDecentants(selector, '.lazy-asset').each(function() {
+        selectMeOrDescendants(selector, 'lazy-asset').forEach(function (item) {
+            item.classList.remove('playing');
 
-            $(this).removeClass('playing');
-
-            var video = $(this).find('video');
-            if (video.length > 0) {
-                video[0].pause();
+            let video = item.querySelector('video');
+            if (video !== null) {
+                video.pause();
             }
-
         });
-    }
+    };
 
-    var ASSET_TYPE_VIDEO = 0;
-    var ASSET_TYPE_IMAGE = 1;
-    var ASSET_TYPE_NONE = 2;
+    let ASSET_TYPE_VIDEO = 0;
+    let ASSET_TYPE_IMAGE = 1;
+    let ASSET_TYPE_NONE = 2;
 
     function getAssetType(asset) {
-        var videoSources = asset.find('video source');
-        var pictureSources = asset.find('picture source');
+        let videoSources = asset.querySelectorAll('video source');
+        let pictureSources = asset.querySelectorAll('picture source');
 
         if (videoSources.length > 0 && !isAutoplayDisabled()) { // we have video
             return ASSET_TYPE_VIDEO;
@@ -204,10 +186,11 @@ var LazyAsset = new function() {
 
     function loadAsset(asset, callback) {
 
-        asset.removeClass('staged-for-load').addClass('loading');
+        asset.classList.remove('staged-for-load');
+        asset.classList.add('loading');
 
         // Schedule asset to load
-        switch(getAssetType(asset)) {
+        switch (getAssetType(asset)) {
 
             case ASSET_TYPE_VIDEO:
                 loadVideo(asset, callback);
@@ -222,96 +205,53 @@ var LazyAsset = new function() {
         }
     }
 
-  // Function for showing loaded asset
+    // Function for showing loaded asset
     function showAsset(asset) {
-
-        var anim = asset.data('anim') || "none";
-
-        var itemToShow;
-
-        if (asset.hasClass('video')) {
-            itemToShow = asset.find('video');
-        }
-        else {
-            itemToShow = asset.find('img')
-        }
-
-        asset.removeClass('loading').addClass('loaded');
+        asset.classList.remove('loading');
+        asset.classList.add('loaded');
     }
 
     function loadImage(asset, callback) {
-        var img = asset.find('img');
+        let img = asset.querySelector('img');
 
         function fallback() {
-            var imagePath = img.data('fallback-src'); // we take default image!
+            let imagePath = img.dataset.fallbackSrc; // we take default image!
 
-            $('<img/>').attr('src', imagePath).on('load', function() {
-                $(this).remove(); // prevent memory leaks as @benweet suggested
-                img.css('background-image', 'url(' + imagePath + ')');
-                img.removeAttr('alt');
+            let virtualImg = new Image();
+            virtualImg.setAttribute("src", imagePath);
+            virtualImg.onload = function() {
+                virtualImg.remove();
+                img.style.backgroundImage = 'url(' + imagePath + ')';
+                img.removeAttribute('alt');
 
                 showAsset(asset);
-                if (typeof callback !== 'undefined') { callback() };
-            });
+                if (typeof callback !== 'undefined') { callback(); }
+            }
         }
 
         if (bowser.msie) { // No object-fit support in IE / Edge, so that we have to use background-image fallback
             fallback();
         }
-        else if (bowser.msedge && asset.hasClass('lazy-asset-mode-cover')) {
+        else if (bowser.msedge && asset.classList.contains('lazy-asset-mode-cover')) {
             fallback();
         }
         else { // Normal use of <picture> tag!
 
-            asset.find('source').each(function() {
-                changeDataToRealAttribute($(this), 'srcset');
+            asset.querySelectorAll('source').forEach(function (source) {
+                changeDataToRealAttribute(source, 'srcset');
             });
 
-            img[0].onload = function() {
+            img.onload = function () {
                 showAsset(asset);
-                if (typeof callback !== 'undefined') { callback() };
+                if (typeof callback !== 'undefined') { callback(); }
             }
 
-            if (!this.disableAutosizingTotally) {
-                if (asset.hasClass('lazy-asset-auto-sizes')) {
-                    setAutoSize(newElems.filter('source'), asset.width());
-                }
-            }
-
-            // temporarily disable this doubtful optimization:
-
-            // var originalElems = asset.find('img, source');
-
-            // // We copy elements so that we insert all values at once (for all sources). We make sure by that that browser won't start downloading bad source because another one wasn't actived yet.
-            // var newElems = originalElems.clone();
-
-            // newElems.each(function() {
-            //  changeDataToRealAttribute($(this), 'srcset');
-            //  // changeDataToRealAttribute($(this), 'src'); // we don't want to copy src fallback in browsers that support srcset! -> Safari downloads it all the time.
-            // })
-
-   //          if (!this.disableAutosizingTotally) {
-   //              if (asset.hasClass('lazy-asset-auto-sizes')) {
-   //                  setAutoSize(newElems.filter('source'), asset.width());
-   //              }
-   //          }
-
-            // img = newElems.filter('img'); // new img!
-
-            // img[0].onload = function() {
-            //  showAsset(asset);
-            //  if (typeof callback !== 'undefined') { callback() };
-            // }
-
-            // originalElems.remove();
-
-            // asset.find('picture').append(newElems);
         }
     }
 
     function checkVideoLoadingStatus(video, callback) {
         if (video.readyState < 3) {
-            setTimeout(function() {
+            setTimeout(function () {
                 checkVideoLoadingStatus(video, callback);
             }, 250);
         }
@@ -321,33 +261,38 @@ var LazyAsset = new function() {
     }
 
     function loadVideo(asset, callback) {
-        asset.removeClass('lazy-asset-image').addClass('lazy-asset-video');
+        asset.classList.remove('lazy-asset-image');
+        asset.classList.add('lazy-asset-image');
 
-        var video = asset.find('video');
-        var sources = video.find('source');
+        // asset.removeClass('lazy-asset-image').addClass('lazy-asset-video');
 
-        sources.each(function() {
-            changeDataToRealAttribute($(this), 'src');
-        })
+        let video = asset.querySelector('video');
+        let sources = video.querySelectorAll('source');
 
-        video = video[0];
+        sources.forEach(function (source) {
+            changeDataToRealAttribute(source, 'src');
+        });
 
         video.load();
 
-        checkVideoLoadingStatus(video, function() {
-            if (asset.hasClass('playing')) {
+        checkVideoLoadingStatus(video, function () {
+            if (asset.classList.contains('playing')) {
                 video.play();
             }
             showAsset(asset);
 
-            if (typeof callback !== 'undefined') { callback() };
+            if (typeof callback !== 'undefined') {
+                callback()
+            }
         });
     }
 
 
-    var LoadSession = function(successCallback, progressCallback) {
-        this.successCallback = typeof successCallback === 'undefined' ? function() {} : successCallback;
-        this.progressCallback = typeof progressCallback === 'undefined' ? function() {} : progressCallback;
+    let LoadSession = function (successCallback, progressCallback) {
+        this.successCallback = typeof successCallback === 'undefined' ? function () {
+        } : successCallback;
+        this.progressCallback = typeof progressCallback === 'undefined' ? function () {
+        } : progressCallback;
         this.numberOfVideos = 0;
         this.numberOfImages = 0;
         this.numberOfVideosLoaded = 0;
@@ -356,10 +301,10 @@ var LazyAsset = new function() {
         this.videosToLoad = [];
     }
 
-    LoadSession.prototype.tryToInvokeCallback = function() {
+    LoadSession.prototype.tryToInvokeCallback = function () {
 
         if (this.numberOfImages + this.numberOfVideos != 0) {
-            this.progressCallback( (this.numberOfVideosLoaded + this.numberOfImagesLoaded) / (this.numberOfImages + this.numberOfVideos) );
+            this.progressCallback((this.numberOfVideosLoaded + this.numberOfImagesLoaded) / (this.numberOfImages + this.numberOfVideos));
         } else {
             this.progressCallback(1);
         }
@@ -369,19 +314,19 @@ var LazyAsset = new function() {
         }
     }
 
-    LoadSession.prototype.run = function() {
-        var _this = this;
+    LoadSession.prototype.run = function () {
+        let _this = this;
 
-        for(var j = 0; j < this.videosToLoad.length; j++) {
-            loadAsset(this.videosToLoad[j], function() {
+        for (let j = 0; j < this.videosToLoad.length; j++) {
+            loadAsset(this.videosToLoad[j], function () {
                 _this.numberOfVideosLoaded++;
                 _this.tryToInvokeCallback();
             });
         }
 
         // Load images
-        for(var i = 0; i < this.imagesToLoad.length; i++) {
-            loadAsset(this.imagesToLoad[i], function() {
+        for (let i = 0; i < this.imagesToLoad.length; i++) {
+            loadAsset(this.imagesToLoad[i], function () {
                 _this.numberOfImagesLoaded++;
                 _this.tryToInvokeCallback();
             });
@@ -392,67 +337,58 @@ var LazyAsset = new function() {
     }
 
 
+    this.load = function (selector, successCallback, progressCallback) {
 
-    this.load = function(selector, successCallback, progressCallback) {
-
-        var session = new LoadSession(successCallback, progressCallback);
+        let session = new LoadSession(successCallback, progressCallback);
 
         // Go through all lazy assets in range of `selector` and determine weather it's image or video and if we should load or not.
-        var lazyAssetItems = selectMeOrDecentants(selector, '.lazy-asset');
+        let lazyAssetItems = selectMeOrDescendants(selector, 'lazy-asset');
 
-        lazyAssetItems.each(function() {
+        lazyAssetItems.forEach(function (item) {
 
             // If image / video is loading or already being loaded, ignore!
-            if ($(this).hasClass('loaded') || $(this).hasClass('loading') || $(this).hasClass('staged-for-load')) { return; }
+            if (item.classList.contains('loaded') || item.classList.contains('loading') || item.classList.contains('staged-for-load')) {
+                return;
+            }
 
             // When load in viewport, just stage for load and leave iteration
-            if ($(this).hasClass('lazy-asset-load-when-in-viewport')) {
-                $(this).addClass('staged-for-load');
-                loadWhenInViewPortItems.push($(this));
+            if (item.classList.contains('lazy-asset-load-when-in-viewport')) {
+                item.classList.add('staged-for-load');
+                loadWhenInViewPortItems.push(item);
                 return;
             }
 
             // Schedule asset to load
-            switch(getAssetType($(this))) {
+            switch (getAssetType(item)) {
 
                 case ASSET_TYPE_VIDEO:
                     session.numberOfVideos++;
-                    session.videosToLoad.push($(this));
+                    session.videosToLoad.push(item);
                     break;
 
                 case ASSET_TYPE_IMAGE:
                     session.numberOfImages++;
-                    session.imagesToLoad.push($(this));
+                    session.imagesToLoad.push(item);
                     break;
 
                 default:
-                    $(this).addClass('loaded');
+                    item.classList.add('loaded');
             }
         });
 
         session.run();
 
-        this.loadWhenInViewportScrollCallback($(window).scrollTop());
-    }
+        this.loadWhenInViewportScrollCallback(window.scrollY);
+    };
 
 
     function changeDataToRealAttribute(node, name) {
-
-        node = node[0];
-        var data = node.getAttribute('data-' + name);
+        let data = node.dataset[name];
         if (data) {
             node.setAttribute(name, data);
         }
-
-        // var data = node.data(name);
-        // if (data) {
-        //     node.attr(name, data)
-        // }
     }
-}
+};
 
-
-
-
-module.exports = LazyAsset;
+export default LazyAsset;
 

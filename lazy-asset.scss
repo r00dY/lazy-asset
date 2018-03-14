@@ -1,59 +1,77 @@
 .lazy-asset {
+  position: relative;
+
+  picture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+
+      opacity: 0;
+
+      // IE fallback
+      background-position: center center;
+      background-size: cover;
+    }
+
+    overflow: hidden;
+  }
+
+  video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: 50% 50%;
+
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .lazy-asset-wrapper {
     position: relative;
+    width: 100%;
+    height: 100%;
+  }
 
-    picture {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
+  .lazy-asset-wrapper-overflow { // we want picture / video to be overflow: hidden, but not necessarily entire lazy-asset-wrapper (extra content!). Therefore additional container added, overflow: hidden doesn't seem to work on <video> tag
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
 
-        img {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            object-position: 50% 50%;
-
-            opacity: 0;
-
-            // IE fallback
-            background-position: center center;
-            background-size: cover;
-        }
-    }
-
-    video {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-
-        object-fit: cover;
-        object-position: 50% 50%;
-
-        opacity: 0;
-    }
-
+  &.lazy-asset-mode-aspect-ratio { // for aspect ratio wrapper has padding-botom, so we don't want to set height
     .lazy-asset-wrapper {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      overflow: hidden;
+      height: auto;
     }
+  }
 
-    &.lazy-asset-mode-aspect-ratio { // for aspect ratio wrapper has padding-botom, so we don't want to set height
-        .lazy-asset-wrapper {
-            height: auto;
-        }
+  // Default background colors
+  &.lazy-asset-image {
+    .lazy-asset-wrapper {
+      background-color: #f7f7f7;
     }
+  }
 
-    // Default background colors
-    &.lazy-asset-image {
-        .lazy-asset-wrapper {
-            background-color: #f7f7f7;
-        }
+  &.lazy-asset-video {
+    .lazy-asset-wrapper {
+      background-color: black;
     }
-
-    &.lazy-asset-video {
-        .lazy-asset-wrapper {
-            background-color: black;
-        }
-    }
+  }
 
   // Animations
   &[data-anim=fade] {

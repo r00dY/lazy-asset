@@ -1,7 +1,4 @@
-var $ = require("jquery");
-var LazyAsset = require("../lazy-asset.js");
-
-global.$ = $;
+import LazyAsset from "../lazy-asset";
 
 /**
  * Tests to write
@@ -11,25 +8,20 @@ global.$ = $;
  *
  */
 
-$(document).ready(function() {
+window.LazyAsset = LazyAsset;
 
-	LazyAsset.load('.modes');
+document.addEventListener("DOMContentLoaded", function() {
+
+	LazyAsset.load(document.querySelectorAll('.modes'));
 	LazyAsset.load('.modes');
 	LazyAsset.load('.modes');
 
 	LazyAsset.normalizeImagesInContainMode('.modes');
 
-	LazyAsset.initAutoSizes();
-
 	LazyAsset.load('.deferred-loads');
 
-	$(window).scroll(function() {
-		LazyAsset.loadWhenInViewportScrollCallback($(window).scrollTop());
-	})
-
-	// LazyAsset.playVideo('.modes');
-	// setTimeout(function() {
-	// 	LazyAsset.pauseVideo('.modes');
-	// }, 3000);
+	window.addEventListener('scroll', function() {
+        LazyAsset.loadWhenInViewportScrollCallback();
+	});
 
 });
