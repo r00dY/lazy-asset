@@ -31,6 +31,7 @@ class LazyAsset {
         if (!array_key_exists("extra_markup", $options)) { $options["extra_markup"] = ""; }
         if (!array_key_exists("attributes", $options)) { $options["attributes"] = array(); }
         if (!array_key_exists("autosizes", $options)) { $options["autosizes"] = false; }
+        if (!array_key_exists("load_when_in_viewport", $options)) { $options["load_when_in_viewport"] = false; }
 
         if (!array_key_exists("sizes", $options)) {
             $options["sizes"] = "100vw";
@@ -135,7 +136,7 @@ class LazyAsset {
 
         ?>
 
-        <div class="lazy-asset <?= $mode ?> <?php if ($options["autosizes"]): ?>lazy-asset-auto-sizes<?php endif; ?> <?= $options["classes"] ?> <?= $typeClass ?>" data-anim="<?php echo $options["animation"]; ?>"  data-aspect-ratio="<?= $options["aspect_ratio"] ?>" <?= self::pasteAttributes($options); ?>>
+        <div class="lazy-asset <?= $mode ?> <?php if ($options["load_when_in_viewport"]): ?>lazy-asset-load-when-in-viewport<?php endif; ?> <?php if ($options["autosizes"]): ?>lazy-asset-auto-sizes<?php endif; ?> <?= $options["classes"] ?> <?= $typeClass ?>" data-anim="<?php echo $options["animation"]; ?>"  data-aspect-ratio="<?= $options["aspect_ratio"] ?>" <?= self::pasteAttributes($options); ?>>
             <div class="lazy-asset-wrapper" <?php if ($options["mode"] == self::MODE_ASPECT_RATIO): ?>style="padding-bottom: <?= $options["aspect_ratio_padding"] ?>;"<?php endif; ?> >
 
                 <?php if (count($options["images"]) > 0): ?>
