@@ -20,7 +20,7 @@
 
 		<div class="modes">
 
-			<div class="lazy-asset  image-cover" data-anim="fade">
+			<div class="lazy-asset lazy-asset-auto-sizes image-cover" data-anim="fade">
 				<div class="lazy-asset-wrapper">
 					<picture>
 						<source data-srcset="
@@ -43,7 +43,7 @@
 				</div>
 			</div>
 
-			<div class="lazy-asset  image-cover" data-anim="fade">
+			<div class="lazy-asset lazy-asset-auto-sizes image-cover" data-anim="fade">
 				<div class="lazy-asset-wrapper">
 					<picture>
 						<source data-srcset="
