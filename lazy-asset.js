@@ -82,7 +82,7 @@ var LazyAsset = new function() {
 
     function isElementInViewport (el) {
         var rect = el.getBoundingClientRect();
-        return rect.top < window.innerHeight * 2;
+        return rect.top < window.innerHeight * 2 && rect.top > -window.innerHeight;
     }
 
 
@@ -274,38 +274,9 @@ var LazyAsset = new function() {
 
             if (!this.disableAutosizingTotally) {
                 if (asset.hasClass('lazy-asset-auto-sizes')) {
-                    setAutoSize(newElems.filter('source'), asset.width());
+                    setAutoSize(img.find('source'), asset.width());
                 }
             }
-
-            // temporarily disable this doubtful optimization:
-
-            // var originalElems = asset.find('img, source');
-
-            // // We copy elements so that we insert all values at once (for all sources). We make sure by that that browser won't start downloading bad source because another one wasn't actived yet.
-            // var newElems = originalElems.clone();
-
-            // newElems.each(function() {
-            //  changeDataToRealAttribute($(this), 'srcset');
-            //  // changeDataToRealAttribute($(this), 'src'); // we don't want to copy src fallback in browsers that support srcset! -> Safari downloads it all the time.
-            // })
-
-   //          if (!this.disableAutosizingTotally) {
-   //              if (asset.hasClass('lazy-asset-auto-sizes')) {
-   //                  setAutoSize(newElems.filter('source'), asset.width());
-   //              }
-   //          }
-
-            // img = newElems.filter('img'); // new img!
-
-            // img[0].onload = function() {
-            //  showAsset(asset);
-            //  if (typeof callback !== 'undefined') { callback() };
-            // }
-
-            // originalElems.remove();
-
-            // asset.find('picture').append(newElems);
         }
     }
 
