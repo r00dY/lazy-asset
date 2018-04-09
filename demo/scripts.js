@@ -12,11 +12,24 @@ window.LazyAsset = LazyAsset;
 
 document.addEventListener("DOMContentLoaded", function() {
 
-	LazyAsset.load(document.querySelectorAll('.modes'));
-	LazyAsset.load('.modes');
-	LazyAsset.load('.modes');
+	// setTimeout(function() {
+	// 	LazyAsset.load('body');
+	// }, 2000);
 
-	LazyAsset.normalizeImagesInContainMode('.modes');
+	// Contain mode
+    LazyAsset.normalizeImagesInContainMode('body');
+
+    window.addEventListener('resize', function() {
+        LazyAsset.normalizeImagesInContainMode('body');
+	});
+	
+	
+	// LazyAsset.load(document.querySelectorAll('.modes'));
+	// LazyAsset.load('.modes');
+	// LazyAsset.load('.modes');
+    //
+	// LazyAsset.normalizeImagesInContainMode('.modes');
+    //
 
 	LazyAsset.load('.deferred-loads');
 
@@ -24,4 +37,21 @@ document.addEventListener("DOMContentLoaded", function() {
         LazyAsset.loadWhenInViewportScrollCallback();
 	});
 
+    // let video = document.querySelector('.video-controls-test');
+
+    document.getElementById("video-play-button").addEventListener('click', function() {
+        console.log('play video');
+        LazyAsset.playVideo('.video-controls-test');
+    });
+
+    document.getElementById("video-pause-button").addEventListener('click', function() {
+        console.log('pause video');
+        LazyAsset.pauseVideo('.video-controls-test');
+    });
+
+
 });
+
+window.load = function() {
+    LazyAsset.load('body');
+};

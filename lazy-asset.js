@@ -132,7 +132,7 @@ let LazyAsset = new function () {
 
                 wrapper.style.width = widthPercent + "%";
                 wrapper.style.height =  "100%";
-                wrapper.style.top = leftPercent + "%";
+                wrapper.style.left = leftPercent + "%";
             }
         });
 
@@ -167,13 +167,13 @@ let LazyAsset = new function () {
     let ASSET_TYPE_NONE = 2;
 
     function getAssetType(asset) {
-        let videoSources = asset.querySelectorAll('video source');
-        let pictureSources = asset.querySelectorAll('picture source');
+        let video = asset.querySelector('video');
+        let img = asset.querySelector('img');
 
-        if (videoSources.length > 0 && !isAutoplayDisabled()) { // we have video
+        if (video !== null && !isAutoplayDisabled()) { // we have video
             return ASSET_TYPE_VIDEO;
         }
-        else if (pictureSources.length > 0) { // we load image
+        else if (img !== null) { // we load image
             return ASSET_TYPE_IMAGE;
         }
 
@@ -208,6 +208,9 @@ let LazyAsset = new function () {
     }
 
     function loadImage(asset, callback) {
+        asset.classList.remove('lazy-asset-video');
+        asset.classList.add('lazy-asset-image');
+
         let img = asset.querySelector('img');
 
         function fallback() {
@@ -232,9 +235,17 @@ let LazyAsset = new function () {
         }
         else { // Normal use of <picture> tag!
 
-            asset.querySelectorAll('source').forEach(function (source) {
-                changeDataToRealAttribute(source, 'srcset');
-            });
+            let sources = asset.querySelectorAll('picture > source');
+
+            if (sources.length > 0) {
+                asset.querySelectorAll('picture > source').forEach(function (source) {
+                    changeDataToRealAttribute(source, 'srcset');
+                });
+            }
+            else {
+                changeDataToRealAttribute(asset.querySelector('img'), 'srcset');
+            }
+
 
             img.onload = function () {
                 showAsset(asset);
@@ -257,9 +268,7 @@ let LazyAsset = new function () {
 
     function loadVideo(asset, callback) {
         asset.classList.remove('lazy-asset-image');
-        asset.classList.add('lazy-asset-image');
-
-        // asset.removeClass('lazy-asset-image').addClass('lazy-asset-video');
+        asset.classList.add('lazy-asset-video');
 
         let video = asset.querySelector('video');
         let sources = video.querySelectorAll('source');

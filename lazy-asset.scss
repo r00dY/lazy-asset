@@ -1,6 +1,7 @@
 .lazy-asset {
   position: relative;
 
+  // For <picture> images
   picture {
     position: absolute;
     top: 0;
@@ -8,21 +9,40 @@
     width: 100%;
     height: 100%;
 
-    img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 50% 50%;
+    //> img {
+    //  position: absolute;
+    //  top: 0;
+    //  left: 0;
+    //  width: 100%;
+    //  height: 100%;
+    //  object-fit: cover;
+    //  object-position: 50% 50%;
+    //
+    //  opacity: 0;
+    //
+    //  // IE fallback
+    //  background-position: center center;
+    //  background-size: cover;
+    //}
 
-      opacity: 0;
+    overflow: hidden;
+  }
 
-      // IE fallback
-      background-position: center center;
-      background-size: cover;
-    }
+  // For <img> images
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+    opacity: 0;
+
+    // IE fallback
+    background-position: center center;
+    background-size: cover;
 
     overflow: hidden;
   }
@@ -88,7 +108,7 @@
   }
 
   &.loaded {
-    img, video {
+    .lazy-asset-wrapper img, .lazy-asset-wrapper video {
       opacity: 1;
     }
   }

@@ -8,72 +8,123 @@ body {
 	overflow-x: hidden;
 	margin: 0;
 	padding: 0;
+
+	margin: 40px;
+
 	// padding-bottom: 100px;
 }
 
-.modes {
-
-	.image-cover {
-		width: 50vw;
-		height: 50vh;
-		margin-bottom: 50px;
-
-		@media screen and (min-width: 1600px) {
-			width: 100vw;
-		}
-	}
-
-	.image-cover-parts {
-		margin-bottom: 50px;
-		width: 75vw;
-		height: 75vh;
-	}
-
-	.image-aspect-ratio {
-		margin-bottom: 50px;
-		width: 50vw;
-	}
-
-	.image-contain {
-		width: 50vw;
-		height: 50vw;
-		background-color: black;
-		margin-bottom: 50px;
-	}
-}
-
-.deferred-loads {
-	width: 100%;
-
-	// display: flex;
-	// flex-direction: row;
-
-	.item {
-		margin: 20px;
-		width: 400px;
-	}
-}
-
-
-
-.test-svg {
-
-	width: 50vw;
-	height: 50vw;
-	background-color: black;
-	position: relative;
-
-	svg {
-		background-color: red;
+.lazy-asset {
+	@media screen and (min-width: 0) {
 		width: 100%;
-		height: 100%;
-		max-width: 100%;
-		min-width: 100%;
-
-		object-fit: contain;
 	}
 
+	@media screen and (min-width: 768px) {
+		width: 66vw;
+	}
+
+	@media screen and (min-width: 1600px) {
+		width: 33vw;
+	}
+
+	margin-bottom: 50px;
 }
+
+.lazy-asset {
+	background-color: darkgray;
+}
+
+.lazy-asset.mode-cover {
+	height: 600px;
+}
+
+.lazy-asset.mode-contain-high {
+	height: 800px;
+}
+
+.lazy-asset.mode-contain-low {
+	height: 200px;
+}
+
+// Extra markup
+.image-label {
+	position: absolute;
+	top: -10px;
+	left: -10px;
+	height: calc(100% + 20px);
+	width: calc(100% + 20px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(255, 0, 0, 0.2);
+}
+
+
+
+//
+//.modes {
+//
+//	.image-cover {
+//		width: 50vw;
+//		height: 50vh;
+//		margin-bottom: 50px;
+//
+//		@media screen and (min-width: 1600px) {
+//			width: 100vw;
+//		}
+//	}
+//
+//	.image-cover-parts {
+//		margin-bottom: 50px;
+//		width: 75vw;
+//		height: 75vh;
+//	}
+//
+//	.image-aspect-ratio {
+//		margin-bottom: 50px;
+//		width: 50vw;
+//	}
+//
+//	.image-contain {
+//		width: 50vw;
+//		height: 50vw;
+//		background-color: black;
+//		margin-bottom: 50px;
+//	}
+//}
+//
+//.deferred-loads {
+//	width: 100%;
+//
+//	// display: flex;
+//	// flex-direction: row;
+//
+//	.item {
+//		margin: 20px;
+//		width: 400px;
+//	}
+//}
+//
+//
+//
+//.test-svg {
+//
+//	width: 50vw;
+//	height: 50vw;
+//	background-color: black;
+//	position: relative;
+//
+//	svg {
+//		background-color: red;
+//		width: 100%;
+//		height: 100%;
+//		max-width: 100%;
+//		min-width: 100%;
+//
+//		object-fit: contain;
+//	}
+//
+//}
 
 
 // .test {
