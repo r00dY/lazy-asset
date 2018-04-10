@@ -8,28 +8,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-
-    //> img {
-    //  position: absolute;
-    //  top: 0;
-    //  left: 0;
-    //  width: 100%;
-    //  height: 100%;
-    //  object-fit: cover;
-    //  object-position: 50% 50%;
-    //
-    //  opacity: 0;
-    //
-    //  // IE fallback
-    //  background-position: center center;
-    //  background-size: cover;
-    //}
-
-    overflow: hidden;
   }
 
   // For <img> images
-
   img {
     position: absolute;
     top: 0;
@@ -38,13 +19,12 @@
     height: 100%;
     object-fit: cover;
     object-position: 50% 50%;
+
     opacity: 0;
 
     // IE fallback
     background-position: center center;
     background-size: cover;
-
-    overflow: hidden;
   }
 
   video {
@@ -58,7 +38,6 @@
     object-position: 50% 50%;
 
     opacity: 0;
-    overflow: hidden;
   }
 
   .lazy-asset-wrapper {
@@ -103,7 +82,6 @@
   &[data-anim=fade] {
     img, video {
       transition: opacity 1s;
-      will-change: opacity;
     }
   }
 
