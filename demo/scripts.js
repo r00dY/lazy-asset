@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	window.addEventListener('scroll', function() {
         LazyAsset.loadWhenInViewportScrollCallback();
+        LazyAsset.autoplayWhenInViewportCallback();
 	});
 
     // let video = document.querySelector('.video-controls-test');

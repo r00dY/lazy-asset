@@ -225,6 +225,11 @@ require('../lazy-asset.php');
 
     <h1>Deferred loads</h1>
 
+    <p>Things to test</p>
+    <ul>
+        <li>Images should show up only when in viewport or close to viewport (2x multiplier)</li>
+    </ul>
+
     <div class="deferred-loads">
 
         <?php
@@ -247,6 +252,37 @@ require('../lazy-asset.php');
                     ]
                 ],
                 "load_when_in_viewport" => true
+            ]);
+
+        }
+
+        ?>
+    </div>
+
+    <h1>Autoplay video when in viewport</h1>
+
+    <p>Things to test</p>
+    <ul>
+        <li>Videos should play only when in viewport and stop when they're not in viewport</li>
+    </ul>
+
+    <div class="autoplay-video-when-in-viewport">
+
+        <?php
+
+        for ($i = 0; $i < 4; $i++) {
+
+            $height = (string)(300 + $i);
+            $path = "https://placeholdit.co//i/555x" . $height;
+
+            LazyAsset::put([
+                "mode" => LazyAsset::MODE_ASPECT_RATIO,
+                "classes" => "video-with-autoplay",
+                "animation" => "fade",
+                "alt" => "Alternative image text",
+                "videos" => $videos,
+                "images" => $catLandscape,
+                "autoplay_when_in_viewport" => true,
             ]);
 
         }

@@ -11,6 +11,8 @@ let bowser = require("bowser");
 
 let LazyAsset = new function () {
 
+    let _this = this;
+
     function selectMeOrDescendants(arg, cls) {
 
         let nodes = [];
@@ -70,9 +72,12 @@ let LazyAsset = new function () {
     }
 
 
-    function isElementInViewport(el) {
+    function isElementInViewport(el, multiplier) {
+
+        if (typeof multiplier === 'undefined') { multiplier = 1; }
+
         let rect = el.getBoundingClientRect();
-        return rect.top < window.innerHeight * 2 && rect.top > -window.innerHeight && rect.width > 0 && rect.height > 0;
+        return rect.top < window.innerHeight * multiplier && (rect.top + rect.height) > -(multiplier - 1) * window.innerHeight && rect.width > 0 && rect.height > 0;
     }
 
 
@@ -82,7 +87,7 @@ let LazyAsset = new function () {
         let itemsToLoad = [];
 
         loadWhenInViewPortItems.forEach(function(item) {
-            if (isElementInViewport(item)) {
+            if (isElementInViewport(item, 2)) {
                 itemsToLoad.push(item);
             }
         });
@@ -100,8 +105,19 @@ let LazyAsset = new function () {
         });
     };
 
+    let autoplayWhenInViewportItems = [];
 
+    this.autoplayWhenInViewportCallback = function() {
 
+        autoplayWhenInViewportItems.forEach(function(item) {
+            if (isElementInViewport(item)) {
+                LazyAsset.playVideo(item);
+            }
+            else {
+                LazyAsset.pauseVideo(item);
+            }
+        });
+    };
 
     // We need to call this on resize and on init of pages which have images in "Contain mode". Reasons why we can't do this by CSS?
     // 1. If we have SVG, and image with max-width 100%, min-width 100%, height: auto, width: auto, then if image is smaller then it doesn’t snap to the placeholder.
@@ -298,7 +314,15 @@ let LazyAsset = new function () {
 
         video.load();
 
-        checkVideoLoadingStatus(video, function () {
+        checkVideoLoadingStatus(video,  () => {
+
+            // Autoplay when in viewport. When video is loaded it should register for listening autoplay scroll event
+            if (asset.classList.contains('lazy-asset-autoplay-when-in-viewport')) {
+                autoplayWhenInViewportItems.push(asset);
+                console.log(autoplayWhenInViewportItems);
+                _this.autoplayWhenInViewportCallback();
+            }
+
             if (asset.classList.contains('playing')) {
                 video.play();
             }

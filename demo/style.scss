@@ -59,6 +59,12 @@ body {
 	background-color: rgba(255, 0, 0, 0.2);
 }
 
+.video-with-autoplay {
+	margin-bottom: 70vh;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
 
 
 //

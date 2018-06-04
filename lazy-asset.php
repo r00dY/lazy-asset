@@ -109,6 +109,9 @@ class LazyAsset
         if (!array_key_exists("autoplay", $options)) {
             $options["autoplay"] = false;
         }
+        if (!array_key_exists("autoplay_when_in_viewport", $options)) {
+            $options["autoplay_when_in_viewport"] = false;
+        }
         if (!array_key_exists("muted", $options)) {
             $options["muted"] = true;
         }
@@ -207,7 +210,7 @@ class LazyAsset
 
         ?>
 
-        <div class="lazy-asset <?= $mode ?>  <?= $options["classes"] ?> <?= $typeClass ?> <?php if ($options["load_when_in_viewport"]): ?>lazy-asset-load-when-in-viewport<?php endif ?>  <?php if ($options["preload"]): ?>lazy-asset-preload<?php endif ?>"
+        <div class="lazy-asset <?= $mode ?>  <?= $options["classes"] ?> <?= $typeClass ?> <?php if ($options["load_when_in_viewport"]): ?>lazy-asset-load-when-in-viewport<?php endif ?> <?php if ($options["autoplay_when_in_viewport"]): ?>lazy-asset-autoplay-when-in-viewport<?php endif ?>" <?php if ($options["preload"]): ?>lazy-asset-preload<?php endif ?>"
              data-anim="<?php echo $options["animation"]; ?>"
              data-aspect-ratio="<?= $options["aspect_ratio"] ?>" <?= self::pasteAttributes($options); ?>>
 
