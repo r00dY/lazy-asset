@@ -49,6 +49,36 @@
     transition: opacity 1s; }
   .lazy-asset.loaded .lazy-asset-wrapper img, .lazy-asset.loaded .lazy-asset-wrapper video {
     opacity: 1; }
+  .lazy-asset .lazy-asset-debugger {
+    color: white;
+    font-size: 12px;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: 'Consolas', monospace; }
+    .lazy-asset .lazy-asset-debugger > div {
+      padding: 2px 4px; }
+    .lazy-asset .lazy-asset-debugger__img-sizes {
+      background: rgba(0, 8, 136, 0.5); }
+      .lazy-asset .lazy-asset-debugger__img-sizes .lazy-debugger__img-crop,
+      .lazy-asset .lazy-asset-debugger__img-sizes .lazy-debugger__img-mode {
+        display: none; }
+      .lazy-asset .lazy-asset-debugger__img-sizes:hover .lazy-debugger__img-crop,
+      .lazy-asset .lazy-asset-debugger__img-sizes:hover .lazy-debugger__img-mode {
+        display: block; }
+    .lazy-asset .lazy-asset-debugger__img-container {
+      background: rgba(0, 136, 136, 0.5); }
+    .lazy-asset .lazy-asset-debugger__img-asset {
+      background: rgba(8, 8, 0, 0.5); }
+    .lazy-asset .lazy-asset-debugger__img-efficiency {
+      background: rgba(0, 136, 0, 0.5); }
+      .lazy-asset .lazy-asset-debugger__img-efficiency--warn {
+        background: rgba(136, 136, 0, 0.5); }
+      .lazy-asset .lazy-asset-debugger__img-efficiency--error {
+        background: rgba(136, 0, 0, 0.5); }
 
 html, body {
   -webkit-font-smoothing: antialiased; }

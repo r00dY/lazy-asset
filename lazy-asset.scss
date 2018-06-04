@@ -91,4 +91,49 @@
     }
   }
 
+  .lazy-asset-debugger {
+    $_BACKGROUND_OPACITY: 0.5;
+    color: white;
+    font-size: 12px;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: 'Consolas', monospace;
+    & > div {
+      padding: 2px 4px;
+    }
+    &__img-sizes {
+      background: rgba(#000888, $_BACKGROUND_OPACITY);
+      .lazy-debugger__img-crop,
+      .lazy-debugger__img-mode {
+        display: none;
+      }
+      &:hover {
+        .lazy-debugger__img-crop,
+        .lazy-debugger__img-mode {
+          display: block;
+        }
+      }
+    }
+    &__img-container {
+      background: rgba(#008888, $_BACKGROUND_OPACITY);
+    }
+    &__img-asset {
+      background: rgba(#080800, $_BACKGROUND_OPACITY);
+    }
+    &__img-efficiency {
+      background: rgba(#008800, $_BACKGROUND_OPACITY);
+
+      &--warn {
+        background: rgba(#888800, $_BACKGROUND_OPACITY);
+      }
+      &--error {
+        background: rgba(#880000, $_BACKGROUND_OPACITY);
+      }
+    }
+  }
+
 }

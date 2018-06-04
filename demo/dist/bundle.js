@@ -493,7 +493,7 @@ let LazyAsset = new function () {
 
         // Try to invoke after start, maybe we don't have anything to load and need to invoke callback right away
         _this.tryToInvokeCallback();
-    }
+    };
 
 
     this.load = function (selector, successCallback, progressCallback) {
@@ -538,6 +538,109 @@ let LazyAsset = new function () {
         session.run();
 
         this.loadWhenInViewportScrollCallback(window.scrollY);
+    };
+
+
+    this.debug = function() {
+
+        let devicePixelDensity = window.devicePixelRatio;
+
+        function getPercent(num) {
+            return Math.round(num * 100).toString();
+        }
+
+        let loadedAssets = [];
+        let notLoadedAssets = [];
+
+        document.querySelectorAll('.lazy-asset').forEach((asset) => {
+
+            let img = asset.querySelector('img');
+            let containerWidth = img.clientWidth;
+            let src = img.currentSrc;
+
+            let tmpImg = new Image();
+            tmpImg.src = img.currentSrc;
+
+            let loadedWidth = tmpImg.width / devicePixelDensity;
+
+            let diff = Math.abs(loadedWidth / containerWidth - 1);
+
+            // Remove old debugger
+            let oldDebugger = asset.querySelector('.lazy-asset-debugger');
+            if (oldDebugger) { oldDebugger.remove(); }
+
+            let debug = document.createElement("div");
+            debug.classList.add('lazy-asset-debugger');
+
+            if (loadedWidth === 0) {
+                let debugRatio = document.createElement('div');
+                debugRatio.appendChild(document.createTextNode(`not loaded`));
+                debugRatio.classList.add('lazy-asset-debugger__img-container');
+
+                debug.appendChild(debugRatio);
+
+                notLoadedAssets.push({
+                    asset: asset
+                });
+            }
+            else {
+                let debugRatio = document.createElement('div');
+                debugRatio.appendChild(document.createTextNode(`container: ${getPercent(containerWidth / window.innerWidth)}vw, ${containerWidth.toString()}px`));
+                debugRatio.classList.add('lazy-asset-debugger__img-container');
+
+                let debugLoaded = document.createElement('div');
+                debugLoaded.appendChild(document.createTextNode(`image: ${loadedWidth.toString()}px`));
+                debugLoaded.classList.add('lazy-asset-debugger__img-asset');
+
+                let debugEfficiency = document.createElement('div');
+                debugEfficiency.appendChild(document.createTextNode(`eff: ${getPercent(loadedWidth / containerWidth)}%`));
+                debugEfficiency.classList.add('lazy-asset-debugger__img-efficiency');
+
+
+                if (diff < 0.3) {}
+                else if (diff < 0.5) {
+                    debugEfficiency.classList.add('lazy-asset-debugger__img-efficiency--warn');
+                } else {
+                    debugEfficiency.classList.add('lazy-asset-debugger__img-efficiency--error');
+                }
+
+                debug.appendChild(debugRatio);
+                debug.appendChild(debugLoaded);
+                debug.appendChild(debugEfficiency);
+
+                loadedAssets.push({
+                    asset: asset,
+                    diff: diff,
+                    eff: loadedWidth / containerWidth
+                });
+
+            }
+
+
+            asset.appendChild(debug);
+        });
+
+        loadedAssets.sort((a, b) => {
+            if (a.eff == b.eff) {
+                return 0;
+            } else if (a.eff < b.eff) {
+                return 1
+            }
+            return -1;
+        });
+
+        console.log('LOADED ASSETS: ');
+        loadedAssets.forEach((asset) => {
+            let isBad = asset.diff > 0.5 ? "(BAD)" : "";
+            console.log(`Eff ${isBad}: ${asset.eff}, asset: `, asset.asset);
+        });
+
+        console.log('NOT LOADED ASSETS: ');
+        loadedAssets.forEach((asset) => {
+            console.log(asset.asset);
+        });
+
+
     };
 
 
