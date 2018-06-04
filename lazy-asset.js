@@ -238,12 +238,10 @@ let LazyAsset = new function () {
             if (asset.classList.contains('lazy-asset-preload')) {
 
                 if (img.complete && img.naturalWidth > 0) { // image already loaded
-                    console.log('already loaded');
                     showAsset(asset);
                     if (typeof callback !== 'undefined') { callback(); }
                 }
                 else {
-                    console.log('must wait for load');
                     img.onload = function () {
                         showAsset(asset);
                         if (typeof callback !== 'undefined') { callback(); }
@@ -417,6 +415,8 @@ let LazyAsset = new function () {
 
         document.querySelectorAll('.lazy-asset').forEach((asset) => {
 
+            if (asset.classList.contains('lazy-asset-video')) { return; }
+
             let img = asset.querySelector('img');
             let containerWidth = img.clientWidth;
             let src = img.currentSrc;
@@ -435,7 +435,7 @@ let LazyAsset = new function () {
             let debug = document.createElement("div");
             debug.classList.add('lazy-asset-debugger');
 
-            if (loadedWidth === 0) {
+            if (img.naturalWidth === 0) {
                 let debugRatio = document.createElement('div');
                 debugRatio.appendChild(document.createTextNode(`not loaded`));
                 debugRatio.classList.add('lazy-asset-debugger__img-container');
@@ -499,7 +499,7 @@ let LazyAsset = new function () {
         });
 
         console.log('NOT LOADED ASSETS: ');
-        loadedAssets.forEach((asset) => {
+        notLoadedAssets.forEach((asset) => {
             console.log(asset.asset);
         });
 
