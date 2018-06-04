@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
+    // LazyAsset.load('body');
 });
 
 window.load = function() {
@@ -369,23 +370,41 @@ let LazyAsset = new function () {
         else if (bowser.msedge && asset.classList.contains('lazy-asset-mode-cover')) {
             fallback();
         }
-        else { // Normal use of <picture> tag!
+        else { // Normal use of <picture> or <img> tag!
 
-            let sources = asset.querySelectorAll('picture > source');
+            if (asset.classList.contains('lazy-asset-preload')) {
 
-            if (sources.length > 0) {
-                asset.querySelectorAll('picture > source').forEach(function (source) {
-                    changeDataToRealAttribute(source, 'srcset');
-                });
+                if (img.complete && img.naturalWidth > 0) { // image already loaded
+                    console.log('already loaded');
+                    showAsset(asset);
+                    if (typeof callback !== 'undefined') { callback(); }
+                }
+                else {
+                    console.log('must wait for load');
+                    img.onload = function () {
+                        showAsset(asset);
+                        if (typeof callback !== 'undefined') { callback(); }
+                    }
+                }
             }
             else {
-                changeDataToRealAttribute(asset.querySelector('img'), 'srcset');
-            }
 
+                let sources = asset.querySelectorAll('picture > source');
 
-            img.onload = function () {
-                showAsset(asset);
-                if (typeof callback !== 'undefined') { callback(); }
+                if (sources.length > 0) {
+                    asset.querySelectorAll('picture > source').forEach(function (source) {
+                        changeDataToRealAttribute(source, 'srcset');
+                    });
+                }
+                else {
+                    changeDataToRealAttribute(asset.querySelector('img'), 'srcset');
+                }
+
+                img.onload = function () {
+                    showAsset(asset);
+                    if (typeof callback !== 'undefined') { callback(); }
+                }
+
             }
 
         }

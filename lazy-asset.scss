@@ -59,7 +59,7 @@
     overflow: hidden;
   }
 
-  &.lazy-asset-mode-aspect-ratio { // for aspect ratio wrapper has padding-botom, so we don't want to set height
+  &.lazy-asset-mode-aspect-ratio { // for aspect ratio wrapper has padding-bottom, so we don't want to set height
     .lazy-asset-wrapper {
       height: auto;
     }

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  apache:
+#    build:
+#      context: .
+    image: php:7.2-apache
+    restart: always
+    ports:
+      - "3000:80"
+    volumes:
+      - .:/var/www/html

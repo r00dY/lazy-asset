@@ -187,6 +187,18 @@ require('../lazy-asset.php');
             "animation" => "none"
     ]); ?>
 
+    <h1>PRELOAD</h1>
+
+    <p>Things to test</p>
+    <ul>
+        <li>Check if items are downloaded right after content starts being downloaded (before DOMContentLoaded). You can check it in Network tab in DevTools</li>
+        <li>Check if items are animated with fade effect</li>
+    </ul>
+
+    <?php renderAll([
+            "preload" => true
+    ]); ?>
+
 
     <h1>Video controls</h1>
 

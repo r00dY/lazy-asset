@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
+    // LazyAsset.load('body');
 });
 
 window.load = function() {

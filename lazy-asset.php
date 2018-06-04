@@ -93,6 +93,9 @@ class LazyAsset
         if (!array_key_exists("alt", $options)) {
             $options["alt"] = "";
         }
+        if (!array_key_exists("preload", $options)) {
+            $options["preload"] = false;
+        }
         if (!array_key_exists("images", $options)) {
             $options["images"] = [];
         }
@@ -111,7 +114,7 @@ class LazyAsset
         }
 
         if (count($options["images"]) === 0) {
-            trigger_error("lazy asset must have 'images' parametr which is non-zero-length array. It is: ", $options["images"]);
+            trigger_error("lazy asset must have 'images' parameter which is non-zero-length array. It is: ", $options["images"]);
         }
 
         // IMAGES
@@ -165,6 +168,26 @@ class LazyAsset
         return $result;
     }
 
+    private static function getSrcset($images) {
+        $result = "";
+        foreach ($images as $image) {
+            $result .= ($image["url"] . " " . $image["width"] . "w, ");
+        }
+        return $result;
+
+    }
+
+    private static function getSources($images, $preload = false) {
+        $result = "data-srcset=\"" . self::getSrcset($images) . "\" ";
+
+        if ($preload) {
+            $result .= "srcset=\"" . self::getSrcset($images) . "\" ";
+
+        }
+
+        return $result;
+    }
+
 
     public static function put($options)
     {
@@ -184,7 +207,7 @@ class LazyAsset
 
         ?>
 
-        <div class="lazy-asset <?= $mode ?>  <?= $options["classes"] ?> <?= $typeClass ?> <?php if ($options["load_when_in_viewport"]): ?>lazy-asset-load-when-in-viewport<?php endif ?>"
+        <div class="lazy-asset <?= $mode ?>  <?= $options["classes"] ?> <?= $typeClass ?> <?php if ($options["load_when_in_viewport"]): ?>lazy-asset-load-when-in-viewport<?php endif ?>  <?php if ($options["preload"]): ?>lazy-asset-preload<?php endif ?>"
              data-anim="<?php echo $options["animation"]; ?>"
              data-aspect-ratio="<?= $options["aspect_ratio"] ?>" <?= self::pasteAttributes($options); ?>>
 
@@ -199,10 +222,7 @@ class LazyAsset
 
                         <?php if (count($options["images_portrait"]) === 0): ?>
 
-                            <img data-srcset="
-                        <?php foreach ($options["images_landscape"] as $image): ?>
-                            <?= $image["url"] ?> <?= $image["width"] ?>w,
-                        <?php endforeach ?>"
+                            <img <?= self::getSources($options["images_landscape"], $options["preload"])?>
                                  sizes="<?= $options["sizes"] ?>"
                                  data-fallback-src="<?= $options["images_fallback_url"] ?>"
                                  alt="<?= $options["alt"] ?>">
@@ -213,19 +233,11 @@ class LazyAsset
                             <picture>
 
                                 <?php if (count($options["images_portrait"]) > 0): ?>
-                                    <source data-srcset="
-                    <?php foreach ($options["images_portrait"] as $image): ?>
-                        <?= $image["url"] ?> <?= $image["width"] ?>w,
-                    <?php endforeach ?>
-                    " media="(orientation: portrait)" sizes="<?= $options["sizes"] ?>">
+                                    <source <?= self::getSources($options["images_portrait"], $options["preload"])?> media="(orientation: portrait)" sizes="<?= $options["sizes"] ?>">
                                 <?php endif; ?>
 
                                 <?php if (count($options["images_landscape"]) > 0): ?>
-                                    <source data-srcset="
-                    <?php foreach ($options["images_landscape"] as $image): ?>
-                        <?= $image["url"] ?> <?= $image["width"] ?>w,
-                    <?php endforeach ?>
-                    " sizes="<?= $options["sizes"] ?>">
+                                    <source <?= self::getSources($options["images_landscape"], $options["preload"])?> sizes="<?= $options["sizes"] ?>">
                                 <?php endif; ?>
 
                                 <img data-src="<?= $options["images"][0]["url"] ?>"
