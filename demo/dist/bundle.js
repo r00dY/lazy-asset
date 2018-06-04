@@ -237,6 +237,9 @@ let LazyAsset = new function () {
         });
     };
 
+
+
+
     // We need to call this on resize and on init of pages which have images in "Contain mode". Reasons why we can't do this by CSS?
     // 1. If we have SVG, and image with max-width 100%, min-width 100%, height: auto, width: auto, then if image is smaller then it doesn’t snap to the placeholder.
     // 2. If we have SVG and div with background-size: contain, then 1px line problem occurs.
