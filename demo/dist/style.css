@@ -128,3 +128,19 @@ body {
   margin-bottom: 70vh; }
   .video-with-autoplay:last-child {
     margin-bottom: 0; }
+
+.autoplay-video-when-in-viewport {
+  display: flex;
+  flex-direction: row;
+  width: 100%; }
+  .autoplay-video-when-in-viewport .right {
+    position: sticky;
+    top: 20px;
+    height: 100px;
+    width: 400px;
+    margin-left: 50px;
+    font-size: 18px; }
+    .autoplay-video-when-in-viewport .right .on {
+      color: green; }
+    .autoplay-video-when-in-viewport .right .off {
+      color: red; }

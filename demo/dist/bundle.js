@@ -122,6 +122,23 @@ document.addEventListener("DOMContentLoaded", function() {
         __WEBPACK_IMPORTED_MODULE_0__lazy_asset__["a" /* default */].pauseVideo('.video-controls-test');
     });
 
+    // AUTOPLAY
+
+    function updateAutoplaying() {
+
+    }
+
+    document.querySelectorAll('button.autoplay-video-on').forEach((e) => {
+        e.addEventListener('click', () => {
+            __WEBPACK_IMPORTED_MODULE_0__lazy_asset__["a" /* default */].autoplayWhenInViewport(e.parentElement.nextElementSibling, true);
+        });
+    });
+
+    document.querySelectorAll('button.autoplay-video-off').forEach((e) => {
+        e.addEventListener('click', () => {
+            __WEBPACK_IMPORTED_MODULE_0__lazy_asset__["a" /* default */].autoplayWhenInViewport(e.parentElement.nextElementSibling, false);
+        });
+    });
 
     // LazyAsset.load('body');
 });
@@ -295,6 +312,23 @@ let LazyAsset = new function () {
 
     };
 
+    this.autoplayWhenInViewport = function (selector, flag) {
+
+        selectMeOrDescendants(selector, 'lazy-asset').forEach((item) => {
+
+            if (flag) {
+                item.classList.add('lazy-asset-autoplay-when-in-viewport');
+                autoplayWhenInViewportItems.push(item);
+                this.autoplayWhenInViewportCallback();
+
+            } else {
+                item.classList.remove('lazy-asset-autoplay-when-in-viewport');
+                autoplayWhenInViewportItems = autoplayWhenInViewportItems.filter(i => i !== item);
+                this.pauseVideo(item);
+            }
+        })
+    };
+
     this.playVideo = function (selector) {
 
         selectMeOrDescendants(selector, 'lazy-asset').forEach(function (item) {
@@ -457,7 +491,6 @@ let LazyAsset = new function () {
             // Autoplay when in viewport. When video is loaded it should register for listening autoplay scroll event
             if (asset.classList.contains('lazy-asset-autoplay-when-in-viewport')) {
                 autoplayWhenInViewportItems.push(asset);
-                console.log(autoplayWhenInViewportItems);
                 _this.autoplayWhenInViewportCallback();
             }
 

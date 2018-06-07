@@ -268,26 +268,58 @@ require('../lazy-asset.php');
 
     <div class="autoplay-video-when-in-viewport">
 
-        <?php
+        <div class="left">
+            <?php
 
-        for ($i = 0; $i < 4; $i++) {
+            $AUTOPLAY_AMOUNT = 4;
 
-            $height = (string)(300 + $i);
-            $path = "https://placeholdit.co//i/555x" . $height;
+            for ($i = 0; $i < $AUTOPLAY_AMOUNT; $i++) {
 
-            LazyAsset::put([
-                "mode" => LazyAsset::MODE_ASPECT_RATIO,
-                "classes" => "video-with-autoplay",
-                "animation" => "fade",
-                "alt" => "Alternative image text",
-                "videos" => $videos,
-                "images" => $catLandscape,
-                "autoplay_when_in_viewport" => true,
-            ]);
+                $height = (string)(300 + $i);
+                $path = "https://placeholdit.co//i/555x" . $height;
 
-        }
+                ?>
 
-        ?>
+                <div>
+                    Autoplay when in viewport:
+                    <button class="autoplay-video-on">ON</button>
+                    <button class="autoplay-video-off">OFF</button>
+                </div>
+
+                <?php
+                LazyAsset::put([
+                    "mode" => LazyAsset::MODE_ASPECT_RATIO,
+                    "classes" => "video-with-autoplay",
+                    "animation" => "fade",
+                    "alt" => "Alternative image text",
+                    "videos" => $videos,
+                    "images" => $catLandscape,
+                    "autoplay_when_in_viewport" => true,
+                    "loop" => true
+                ]);
+
+            }
+
+            ?>
+        </div>
+
+        <div class="right">
+            <?php
+
+            for ($i = 0; $i < $AUTOPLAY_AMOUNT; $i++) {
+
+            ?>
+
+<!--                Video --><?//= $i + 1 ?><!--: <span class="autoplay-enabled"></span>, <span class="playing"></span><br/>-->
+
+            <?php
+
+            }
+
+            ?>
+        </div>
+
+
     </div>
 
 

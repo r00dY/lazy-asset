@@ -50,6 +50,23 @@ document.addEventListener("DOMContentLoaded", function() {
         LazyAsset.pauseVideo('.video-controls-test');
     });
 
+    // AUTOPLAY
+
+    function updateAutoplaying() {
+
+    }
+
+    document.querySelectorAll('button.autoplay-video-on').forEach((e) => {
+        e.addEventListener('click', () => {
+            LazyAsset.autoplayWhenInViewport(e.parentElement.nextElementSibling, true);
+        });
+    });
+
+    document.querySelectorAll('button.autoplay-video-off').forEach((e) => {
+        e.addEventListener('click', () => {
+            LazyAsset.autoplayWhenInViewport(e.parentElement.nextElementSibling, false);
+        });
+    });
 
     // LazyAsset.load('body');
 });

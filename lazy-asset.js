@@ -157,6 +157,23 @@ let LazyAsset = new function () {
 
     };
 
+    this.autoplayWhenInViewport = function (selector, flag) {
+
+        selectMeOrDescendants(selector, 'lazy-asset').forEach((item) => {
+
+            if (flag) {
+                item.classList.add('lazy-asset-autoplay-when-in-viewport');
+                autoplayWhenInViewportItems.push(item);
+                this.autoplayWhenInViewportCallback();
+
+            } else {
+                item.classList.remove('lazy-asset-autoplay-when-in-viewport');
+                autoplayWhenInViewportItems = autoplayWhenInViewportItems.filter(i => i !== item);
+                this.pauseVideo(item);
+            }
+        })
+    };
+
     this.playVideo = function (selector) {
 
         selectMeOrDescendants(selector, 'lazy-asset').forEach(function (item) {
@@ -319,7 +336,6 @@ let LazyAsset = new function () {
             // Autoplay when in viewport. When video is loaded it should register for listening autoplay scroll event
             if (asset.classList.contains('lazy-asset-autoplay-when-in-viewport')) {
                 autoplayWhenInViewportItems.push(asset);
-                console.log(autoplayWhenInViewportItems);
                 _this.autoplayWhenInViewportCallback();
             }
 

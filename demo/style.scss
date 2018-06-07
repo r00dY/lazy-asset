@@ -66,6 +66,29 @@ body {
 	}
 }
 
+.autoplay-video-when-in-viewport {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+
+	.right {
+		position: sticky;
+		top: 20px;
+		height: 100px;
+		//background-color: red;
+		width: 400px;
+		margin-left: 50px;
+		font-size: 18px;
+
+		.on {
+			color: green;
+		}
+
+		.off {
+			color: red;
+		}
+	}
+}
 
 //
 //.modes {
