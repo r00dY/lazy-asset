@@ -70,12 +70,21 @@
     .lazy-asset-wrapper {
       background-color: #f7f7f7;
     }
+
+    video {
+      display: none;
+    }
   }
 
   &.lazy-asset-video {
     .lazy-asset-wrapper {
       background-color: black;
     }
+
+    img, picture {
+      display: none;
+    }
+
   }
 
   // Animations
