@@ -298,6 +298,7 @@ let LazyAsset = new function () {
                 wrapper.style.width = "100%";
                 wrapper.style.height = heightPercent + "%";
                 wrapper.style.top = topPercent + "%";
+                wrapper.style.left = "0";
             }
             else {
 
@@ -306,6 +307,7 @@ let LazyAsset = new function () {
 
                 wrapper.style.width = widthPercent + "%";
                 wrapper.style.height =  "100%";
+                wrapper.style.top = "0";
                 wrapper.style.left = leftPercent + "%";
             }
         });
