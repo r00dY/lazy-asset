@@ -111,14 +111,7 @@ let LazyAsset = new function () {
 
         autoplayWhenInViewportItems.forEach(function(item) {
             if (isElementInViewport(item)) {
-                let promise = LazyAsset.playVideo(item);
-
-                // empty promise to avoid exceptions https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
-                promise
-                    .then(_ => {
-                    })
-                    .catch((error) => {
-                    });
+                LazyAsset.playVideo(item);
             }
             else {
                 LazyAsset.pauseVideo(item);
@@ -190,7 +183,14 @@ let LazyAsset = new function () {
 
             let video = item.querySelector('video');
             if (video !== null) {
-                video.play();
+                let promise = video.play();
+
+                // empty promise to avoid exceptions https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
+                promise
+                    .then(_ => {
+                    })
+                    .catch((error) => {
+                    });
             }
         })
     };
