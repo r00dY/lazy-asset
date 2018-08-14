@@ -115,15 +115,17 @@ class LazyAsset
         if (!array_key_exists("muted", $options)) {
             $options["muted"] = true;
         }
-
-        if (count($options["images"]) === 0) {
-            trigger_error("lazy asset must have 'images' parameter which is non-zero-length array. It is: ", $options["images"]);
+        if (!array_key_exists("images_fallback_url", $options) && count($options["images"]) > 0) {
+            $options["images_fallback_url"] = $options["images"][0]["url"];
         }
+
+//        if (count($options["images"]) === 0) {
+//            trigger_error("lazy asset must have 'images' parameter which is non-zero-length array. It is: ", $options["images"]);
+//        }
 
         // IMAGES
         $options["images_landscape"] = [];
         $options["images_portrait"] = [];
-        $options["images_fallback_url"] = $options["images"][0]["url"];
 
         foreach ($options["images"] as &$image) {
             if (!array_key_exists("portrait", $image)) {

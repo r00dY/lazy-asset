@@ -177,6 +177,7 @@ let LazyAsset = new function () {
     };
 
     this.playVideo = function (selector) {
+        if (isAutoplayDisabled()) { return; }
 
         selectMeOrDescendants(selector, 'lazy-asset').forEach(function (item) {
             item.classList.add('playing');
@@ -196,6 +197,7 @@ let LazyAsset = new function () {
     };
 
     this.pauseVideo = function (selector) {
+        if (isAutoplayDisabled()) { return; }
 
         selectMeOrDescendants(selector, 'lazy-asset').forEach(function (item) {
             item.classList.remove('playing');
